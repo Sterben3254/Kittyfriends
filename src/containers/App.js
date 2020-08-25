@@ -4,38 +4,36 @@ import SearchBox from "../components/Searchbox";
 import Scroll from "../components/scroll";
 import Errorboundary from "../components/error";
 import { connect } from "react-redux";
-import { setSearchField } from "../actions";
+import { setSearchField, requestKitties } from "../actions";
+import { searchCats } from "../reducers";
 
 const mapStateToProps = (state) => {
   return {
-    searchField: state.searchField,
+    searchField: state.searchCats.searchField,
+    kitties: state.requestKitties.kitties,
+    isPending: state.requestKitties.isPending,
+    error: state.requestKitties.error,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
+    onRequestKitties: () => dispatch(requestKitties()),
   };
 };
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      kitties: [],
-    };
-  }
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((Response) => Response.json())
-      .then((users) => this.setState({ kitties: users }));
+    this.props.onRequestKitties();
   }
 
   render() {
-    const { kitties } = this.state;
-    const { searchField, onSearchChange } = this.props;
+    const { searchField, onSearchChange, isPending, kitties } = this.props;
     const filteredrobots = kitties.filter((robots) => {
       return robots.name.toLowerCase().startsWith(searchField.toLowerCase());
     });
-    return (
+    return isPending ? (
+      <h1>Loading</h1>
+    ) : (
       <div>
         <h1 className="f1 bg-navy green  ba tc">Kitty Friends</h1>
         <SearchBox searchChange={onSearchChange} />
