@@ -5,7 +5,6 @@ import Scroll from "../components/scroll";
 import Errorboundary from "../components/error";
 import { connect } from "react-redux";
 import { setSearchField, requestKitties } from "../actions";
-import { searchCats } from "../reducers";
 
 const mapStateToProps = (state) => {
   return {
@@ -29,7 +28,7 @@ class App extends Component {
   render() {
     const { searchField, onSearchChange, isPending, kitties } = this.props;
     const filteredrobots = kitties.filter((robots) => {
-      return robots.name.toLowerCase().startsWith(searchField.toLowerCase());
+      return robots.name.toLowerCase().includes(searchField.toLowerCase());
     });
     return isPending ? (
       <h1>Loading</h1>
